@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/csv")
@@ -19,9 +20,9 @@ public class CsvController {
     private final CsvServices csvServices;
 
     @PostMapping("/upload")
-    public ResponseEntity<List<String>> uploadCsv(@RequestParam("file") MultipartFile file) throws IOException {
-        List<String> headers = csvServices.extractHeaders(file);
-        return ResponseEntity.ok(headers);
+    public ResponseEntity<Map<String, Object>> uploadCsv(@RequestParam("file") MultipartFile file) throws IOException {
+        Map<String, Object> result = csvServices.parseCsv(file);
+        return ResponseEntity.ok(result);
     }
  
     @PostMapping("/map-fields")

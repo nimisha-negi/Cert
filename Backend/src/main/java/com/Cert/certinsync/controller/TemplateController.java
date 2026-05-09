@@ -26,8 +26,10 @@ public class TemplateController {
     public ResponseEntity<Map<String, Object>> uploadTemplate(@RequestParam("file") MultipartFile file) {
         try {
             TemplateEntity saved = templateServices.saveTemplate(file);
+            java.util.Set<String> placeholders = com.Cert.certinsync.utils.SvgUtils.extractPlaceholders(saved.getSvgContent());
             return ResponseEntity.ok(Map.of(
                     "templateId", saved.getId(),
+                    "placeholders", placeholders,
                     "message", "Template uploaded successfully"
             ));
         } catch (Exception e) {

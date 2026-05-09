@@ -20,6 +20,33 @@ public class CsvServices {
 
     private final Map<String, String> mappingStore = new ConcurrentHashMap<>();
 
+    public Map<String, Object> parseCsv(MultipartFile file) throws IOException {
+        List<String> headers = new ArrayList<>();
+        List<Map<String, String>> data = new ArrayList<>();
+
+        try (Reader reader = new InputStreamReader(file.getInputStream());
+             CSVParser csvParser = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader)) {
+
+            headers.addAll(csvParser.getHeaderMap().keySet());
+
+            for (org.apache.commons.csv.CSVRecord record : csvParser) {
+                Map<String, String> row = new LinkedHashMap<>();
+                for (String header : headers) {
+                    row.put(header, record.get(header));
+                }
+                data.add(row);
+            }
+        } catch (Exception e) {
+            log.error("Failed to parse CSV: {}", e.getMessage());
+            throw new IOException("Invalid CSV file", e);
+        }
+
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("headers", headers);
+        result.put("data", data);
+        return result;
+    }
+
     public List<String> extractHeaders(MultipartFile file) throws IOException {
         try (Reader reader = new InputStreamReader(file.getInputStream());
              CSVParser csvParser = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader)) {

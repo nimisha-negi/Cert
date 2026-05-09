@@ -10,7 +10,6 @@ import com.Cert.certinsync.entity.ParticipantCertificate;
 @Repository
 	public interface CertificateRepository extends JpaRepository<ParticipantCertificate, Long> {
 	Optional<ParticipantCertificate> findByCertificateId(String certificateId);
+    java.util.List<ParticipantCertificate> findByBatchId(Long batchId);
 
 	}
-
-

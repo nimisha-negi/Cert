@@ -19,9 +19,18 @@ public class ParticipantCertificate {
     private String name;
     private String email;
     private String templateName;
+    private Long templateId;
 
     @Column(unique = true, nullable = false)
     private String certificateId;
 
     private LocalDateTime issuedDate;
+
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
+    private String participantData;
+
+    @ManyToOne
+    @JoinColumn(name = "batch_id")
+    private GenerationBatch batch;
 }

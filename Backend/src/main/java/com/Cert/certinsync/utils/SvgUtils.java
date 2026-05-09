@@ -16,6 +16,18 @@ public class SvgUtils {
         }
         return svg;
     }
+
+    public static String replacePlaceholdersWithMapping(String svg, Map<String, String> data, Map<String, String> mappings) {
+        for (Map.Entry<String, String> mapping : mappings.entrySet()) {
+            String placeholder = mapping.getKey();
+            String csvColumn = mapping.getValue();
+            String value = data.get(csvColumn);
+            if (value != null) {
+                svg = svg.replace("{" + placeholder + "}", value);
+            }
+        }
+        return svg;
+    }
     
     public static String insertCertificateId(String svgContent, String certId) {
         String idText = """
@@ -25,6 +37,16 @@ public class SvgUtils {
 
         // Insert the ID text right before the closing SVG tag
         return svgContent.replace("</svg>", idText + "\n</svg>");
+    }
+
+    public static java.util.Set<String> extractPlaceholders(String svg) {
+        java.util.Set<String> placeholders = new java.util.HashSet<>();
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("\\{([^}]+)\\}");
+        java.util.regex.Matcher matcher = pattern.matcher(svg);
+        while (matcher.find()) {
+            placeholders.add(matcher.group(1));
+        }
+        return placeholders;
     }
 
 
